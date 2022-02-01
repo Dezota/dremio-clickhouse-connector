@@ -1,0 +1,76 @@
+{
+  "sourceType": "CLICKHOUSE",
+  "metadataRefresh": {
+    "datasetDiscovery": true
+  },
+  "form": {
+    "tabs": [
+      {
+        "name": "General",
+        "isGeneral": true,
+        "sections": [
+          {
+            "name": "Connection",
+            "layout": "row",
+            "elements": [
+              {
+                "propName": "config.hostname",
+                "placeholder": "e.g.123.123.123.123",
+                "size": "half",
+                "validate": {
+                  "isRequired": true
+                }
+              },
+              {
+                "propName": "config.port",
+                "size": "half",
+                "validate": {
+                  "isRequired": true
+                }
+              },
+              {
+                "propName": "config.database",
+                "size": "full",
+                "validate": {
+                  "isRequired": true
+                }
+              }
+            ]
+          },
+          {
+            "name": "Authentication",
+            "elements": [
+              {
+                "propName": "config.authenticationType"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Advanced Options",
+        "sections": [
+          {
+            "elements": [
+              {
+                "propName": "config.maxIdleConns",
+                "size": "half",
+                "tooltip": "Maximum number of idle connections to keep."
+              },
+              {
+                "propName": "config.idleTimeSec",
+                "size": "half",
+                "tooltip": "Idle time, in seconds, before a connection is considered for closure."
+              },
+              {
+                "propName": "config.enableExternalQuery",
+                "size": "half",
+                "tooltip": "Allow an External Query to be performed"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
