@@ -17,37 +17,92 @@ data_types:
   mappings:
   # Manually Configured Data Types Mappings Section.
   - source:
-      name: "INTEGER"
+      name: "String"
+    dremio:
+      name: "varchar"
+    required_cast_arguments: "none"
+  - source:
+      name: "Int8"
     dremio:
       name: "integer"
     required_cast_arguments: "none"
   - source:
-      name: "REAL"
+      name: "Int16"
+    dremio:
+      name: "integer"
+    required_cast_arguments: "none"
+  - source:
+      name: "Int32"
+    dremio:
+      name: "integer"
+    required_cast_arguments: "none"
+  - source:
+      name: "Int64"
+    dremio:
+      name: "bigint"
+    required_cast_arguments: "none"
+  - source:
+      name: "Float32"
+    dremio:
+      name: "float"
+    required_cast_arguments: "none"
+  - source:
+      name: "Float64"
     dremio:
       name: "double"
     required_cast_arguments: "none"
   - source:
-      name: "VARCHAR"
+      name: "Date"
     dremio:
-      name: "varchar"
+      name: "date"
     required_cast_arguments: "none"
   - source:
-      name: "STRING"
-    dremio:
-      name: "varchar"
-    required_cast_arguments: "none"
-  - source:
-      name: "DATE"
-    dremio:
-      name: "varchar"
-    required_cast_arguments: "none"
-  - source:
-      name: "DATETIME"
+      name: "DateTime"
     dremio:
       name: "timestamp"
     required_cast_arguments: "none"
   - source:
-      name: "TIMESTAMP"
+      name: "Nullable(String)"
+    dremio:
+      name: "varchar"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(Int8)"
+    dremio:
+      name: "integer"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(Int16)"
+    dremio:
+      name: "integer"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(Int32)"
+    dremio:
+      name: "integer"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(Int64)"
+    dremio:
+      name: "bigint"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(Float32)"
+    dremio:
+      name: "float"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(Float64)"
+    dremio:
+      name: "double"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(Date)"
+    dremio:
+      name: "date"
+    required_cast_arguments: "none"
+  - source:
+      name: "Nullable(DateTime)"
     dremio:
       name: "timestamp"
     required_cast_arguments: "none"

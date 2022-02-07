@@ -3,11 +3,12 @@ version: "2"
 services:
   dremio:
     restart: always
-    image: dezota/dremio-oss:19.1.0
+    image: dezota/dremio-oss:20.0.0
     build: ./build
     hostname: dremio
     environment:
       - TZ="America/Denver"
+      - DREMIO_JAVA_EXTRA_OPTS=-Ddremio.log.level=debug
     volumes:
       - ./dremio.conf:/opt/dremio/conf/dremio.conf:ro
       - ./dremio-env:/opt/dremio/conf/dremio-env:ro

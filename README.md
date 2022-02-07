@@ -11,7 +11,7 @@ The ClickHouse connector allows Dremio to connect to and query data in the high 
 ## Building and Installation
 
 1. In root directory with the pom.xml file run `mvn clean install`
-2. Take the resulting `target/dremio-clickhouse-plugin-19.1.0-202111160130570172-0ee00450.jar` file put it in to the `/opt/dremio/jars` folder of your Dremio 19.1.0 installation.  The Clickhouse JDBC Driver is included in the compiled jar and doesn't need to be included seperately in `/opt/dremio/jars/3rdparty`. 
+2. Take the resulting `target/dremio-clickhouse-plugin-19.1.0-202111160130570172-0ee00450.jar` file put it in to the `/opt/dremio/jars` folder of your Dremio 19.1.0 installation.  The Clickhouse JDBC Driver is included in the compiled jar and doesn't need to be included separately in `/opt/dremio/jars/3rdparty`. 
 3. Restart Dremio
 
 ## Docker Instructions

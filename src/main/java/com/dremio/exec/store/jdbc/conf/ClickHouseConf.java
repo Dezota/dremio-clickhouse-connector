@@ -29,6 +29,7 @@ package com.dremio.exec.store.jdbc.conf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.dremio.exec.store.jdbc.dialect.ClickHouseDialect;
 import com.dremio.options.OptionManager;
 import com.dremio.security.CredentialsService;
 import org.hibernate.validator.constraints.NotBlank;
@@ -36,15 +37,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.dremio.exec.catalog.conf.DisplayMetadata;
 import com.dremio.exec.catalog.conf.NotMetadataImpacting;
 import com.dremio.exec.catalog.conf.SourceType;
-import com.dremio.exec.store.jdbc.CloseableDataSource;
-import com.dremio.exec.store.jdbc.DataSources;
-import com.dremio.exec.store.jdbc.JdbcPluginConfig;
-import com.dremio.exec.store.jdbc.JdbcStoragePlugin;
-import com.dremio.exec.store.jdbc.dialect.arp.ArpDialect;
+import com.dremio.exec.store.jdbc.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.VisibleForTesting;
 import com.dremio.exec.catalog.conf.Secret;
-import com.clickhouse.jdbc.ClickHouseDriver;
 
 import io.protostuff.Tag;
 
@@ -55,8 +51,8 @@ import io.protostuff.Tag;
 @SourceType(value = "CLICKHOUSE", label = "ClickHouse", uiConfig = "clickhouse-layout.json", externalQuerySupported = true)
 public class ClickHouseConf extends AbstractArpConf<ClickHouseConf> {
   private static final String ARP_FILENAME = "arp/implementation/clickhouse-arp.yaml";
-  private static final ArpDialect ARP_DIALECT =
-          AbstractArpConf.loadArpFile(ARP_FILENAME, (ArpDialect::new));
+  //private static final ArpDialect CLICKHOUSE_ARP_DIALECT = AbstractArpConf.loadArpFile(ARP_FILENAME, (ArpDialect::new));
+  private static final ClickHouseDialect CLICKHOUSE_ARP_DIALECT = AbstractArpConf.loadArpFile(ARP_FILENAME, ClickHouseDialect::new);
   private static final String DRIVER = "com.clickhouse.jdbc.ClickHouseDriver";
 
   @NotBlank
@@ -126,6 +122,8 @@ public class ClickHouseConf extends AbstractArpConf<ClickHouseConf> {
             .clearHiddenSchemas()
             .addHiddenSchema("INFORMATION_SCHEMA")
             .addHiddenSchema("system")
+            .addHiddenTableType("FOREIGN TABLE")
+            .addHiddenTableType("SYSTEM VIEW")
             .build();
   }
 
@@ -136,12 +134,117 @@ public class ClickHouseConf extends AbstractArpConf<ClickHouseConf> {
   }
 
   @Override
-  public ArpDialect getDialect() {
-    return ARP_DIALECT;
+  public ClickHouseDialect getDialect() {
+    return CLICKHOUSE_ARP_DIALECT;
   }
 
   @VisibleForTesting
-  public static ArpDialect getDialectSingleton() {
-    return ARP_DIALECT;
+  public static ClickHouseDialect getDialectSingleton() {
+    return CLICKHOUSE_ARP_DIALECT;
   }
 }
+
+/*   static class ClickHouseSchemaFetcher extends ArpDialect.ArpSchemaFetcher {
+    private static final Logger logger = LoggerFactory.getLogger(ClickHouseSchemaFetcher.class);
+    private final JdbcPluginConfig config;
+
+    public ClickHouseSchemaFetcher(String query, JdbcPluginConfig config) {
+      super(query, config);
+      this.config = config;
+      logger.info("query schema:{}", query);
+    }
+
+    @Override
+    protected JdbcFetcherProto.CanonicalizeTablePathResponse getDatasetHandleViaGetTables(JdbcFetcherProto.CanonicalizeTablePathRequest request, Connection connection) throws SQLException {
+      DatabaseMetaData metaData = connection.getMetaData();
+      FilterDescriptor filter = new FilterDescriptor(request, supportsCatalogsWithoutSchemas(this.config.getDialect(), metaData));
+      ResultSet tablesResult = metaData.getTables(filter.catalogName, filter.schemaName, filter.tableName, (String[]) null);
+      Throwable throwable = null;
+
+      JdbcFetcherProto.CanonicalizeTablePathResponse canonicalizeTablePathResponse;
+      try {
+        String currSchema;
+        do {
+          if (!tablesResult.next()) {
+            return JdbcFetcherProto.CanonicalizeTablePathResponse.getDefaultInstance();
+          }
+          currSchema = tablesResult.getString(2);
+        } while (!Strings.isNullOrEmpty(currSchema) && this.config.getHiddenSchemas().contains(currSchema));
+        com.dremio.exec.store.jdbc.JdbcFetcherProto.CanonicalizeTablePathResponse.Builder responseBuilder = JdbcFetcherProto.CanonicalizeTablePathResponse.newBuilder();
+        // cratedb not support catalog,but default implement fetch it so omit it
+        if (!Strings.isNullOrEmpty(currSchema)) {
+          responseBuilder.setSchema(currSchema);
+        }
+        responseBuilder.setTable(tablesResult.getString(3));
+        canonicalizeTablePathResponse = responseBuilder.build();
+      } catch (Throwable ex) {
+        throwable = ex;
+        throw ex;
+      } finally {
+        if (tablesResult != null) {
+          try {
+            closeResource(throwable, tablesResult);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+
+      }
+      return canonicalizeTablePathResponse;
+    }
+
+    private static void closeResource(Throwable throwable, AutoCloseable autoCloseable) throws Exception {
+      if (throwable != null) {
+        try {
+          autoCloseable.close();
+        } catch (Throwable throwable1) {
+          throwable.addSuppressed(throwable1);
+        }
+      } else {
+        autoCloseable.close();
+      }
+
+    }
+
+    protected static class FilterDescriptor {
+      private final String catalogName;
+      private final String schemaName;
+      private final String tableName;
+
+      public FilterDescriptor(JdbcFetcherProto.CanonicalizeTablePathRequest request, boolean hasCatalogsWithoutSchemas) {
+        this.tableName = request.getTable();
+        if (!Strings.isNullOrEmpty(request.getSchema())) {
+          this.schemaName = request.getSchema();
+          this.catalogName = request.getCatalogOrSchema();
+        } else {
+          this.catalogName = hasCatalogsWithoutSchemas ? request.getCatalogOrSchema() : "";
+          this.schemaName = hasCatalogsWithoutSchemas ? "" : request.getCatalogOrSchema();
+        }
+
+      }
+    }
+  }
+
+  static class ClickHouseDialect extends ArpDialect {
+    public ClickHouseDialect(ArpYaml yaml) {
+      super(yaml);
+    }
+
+    @Override
+    public ArpSchemaFetcher newSchemaFetcher(JdbcPluginConfig config) {
+      String query = String.format("SELECT * FROM (SELECT TABLE_SCHEMA CAT, NULL SCH, TABLE_NAME NME from information_schema.tables WHERE TABLE_TYPE NOT IN ('FOREIGN TABLE', 'SYSTEM VIEW')) t WHERE UPPER(CAT) NOT IN ('%s')",  Joiner.on("','").join(config.getHiddenSchemas()));
+      //String query = String.format("SELECT NULL, SCH, NME from ( select table_catalog CAT, table_schema SCH, table_name NME from information_schema.\"tables\" union all select table_catalog CAT, table_schema SCH,table_name NME from information_schema.views ) t where cat not in ('information_schema','pg_catalog','sys', '%s')", new Object[]{Joiner.on("','").join(config.getHiddenSchemas())});
+      return new ClickHouseSchemaFetcher(query, config);
+    }
+
+    @Override
+    public ContainerSupport supportsCatalogs() {
+      return ContainerSupport.UNSUPPORTED;
+    }
+
+    @Override
+    public boolean supportsNestedAggregations() {
+      return false;
+    }
+  }
+*/

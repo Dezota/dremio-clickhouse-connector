@@ -63,9 +63,7 @@
                 "tooltip": "Idle time, in seconds, before a connection is considered for closure."
               },
               {
-                "propName": "config.enableExternalQuery",
-                "size": "half",
-                "tooltip": "Allow an External Query to be performed"
+                "propName": "config.enableExternalQuery"
               }
             ]
           }
