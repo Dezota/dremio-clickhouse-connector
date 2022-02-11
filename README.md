@@ -2,9 +2,9 @@
 
 ![Dremio + Clickhouse](./dremio-clickhouse.svg)
 
-| Supported Dremio Version | Author                            |
-|--------------------------|-----------------------------------|
-| 19.1.0                   | Brian Holman <bholman@dezota.com> |
+| Tested Dremio Versions | Author                            |
+|------------------------|-----------------------------------|
+| 19.1.0 to 20.1.0       | Brian Holman <bholman@dezota.com> |
 
 The ClickHouse connector allows Dremio to connect to and query data in the high performance ClickHouse Columnar Database.
 
