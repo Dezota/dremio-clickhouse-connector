@@ -16,7 +16,7 @@
 
 /*
  *
- * @summary Created a Dremio Connector for Clickhouse with the updated API for Dremio 19.1.0 with inspiration from:
+ * @summary Created a Dremio Connector for Clickhouse with the updated API for Dremio with inspiration from:
  *    https://www.dremio.com/resources/tutorials/how-to-create-an-arp-connector/
  *    https://github.com/altxcorp/dremio-clickhouse-arp-connector
  *    https://github.com/dremio-hub/dremio-sqllite-connector
