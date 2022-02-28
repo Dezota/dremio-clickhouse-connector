@@ -29,6 +29,22 @@
     <version.dremio>20.1.0-202202061055110045-36733c65</version.dremio>
   </properties>
 
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Brian K. Holman</name>
+      <email>bholman@dezota.com</email>
+      <organization>Dezota LLC</organization>
+      <organizationUrl>https://www.dezota.com/</organizationUrl>
+    </developer>
+  </developers>
+
   <dependencies>
     <dependency>
       <groupId>com.dremio.services</groupId>
