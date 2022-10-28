@@ -21,13 +21,13 @@ RUN \
     set -xeu && \
     yum -y -q install https://cdn.azul.com/zulu/bin/zulu-repo-1.0.0-1.noarch.rpm && \
     yum -y -q install python3 zulu8-jdk less && \
-    yum -y -q install https://download.dremio.com/community-server/22.1.1-202208230402290397-a7010f28/dremio-community-22.1.1-202208230402290397_a7010f28_1.noarch.rpm && \
+    yum -y -q install https://download.dremio.com/community-server/23.0.1-202210141019030815-c1de8bcc/dremio-community-23.0.1-202210141019030815_c1de8bcc_1.noarch.rpm && \
     yum -q clean all && \
     rm -rf /var/cache/yum && \
     alternatives --set python /usr/bin/python3
 COPY ./startup.sh /opt/dremio/bin/startup.sh
 COPY ./logback.xml /opt/dremio/conf/logback.xml
-COPY ./dremio-clickhouse-plugin-22.1.1-202208230402290397-a7010f28.jar /opt/dremio/jars
+COPY ./dremio-clickhouse-plugin-23.0.1-202210141019030815-c1de8bcc.jar /opt/dremio/jars
 RUN chmod 755 /opt/dremio/bin/startup.sh
 RUN chown -R dremio:dremio /opt/dremio    
 EXPOSE 2181 9047 31010 45678

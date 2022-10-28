@@ -3,7 +3,7 @@ version: "2"
 services:
   dremio:
     restart: always
-    image: dezota/dremio-oss:22.1.1-1
+    image: dezota/dremio-oss:23.0.1-1
     build: ./build
     hostname: dremio
     environment:

@@ -4,7 +4,7 @@
 
 | Tested Dremio Versions | Author                            |
 |------------------------|-----------------------------------|
-| 19.1.0 to 22.1.1       | Brian Holman <bholman@dezota.com> |
+| 19.1.0 to 23.0.1       | Brian Holman <bholman@dezota.com> |
 
 *This independent project is not affiliated with, sponsored, or endorsed by Dremio Corporation or ClickHouse, Inc. "Dremio" is a registered trademark of Dremio Corporation and they retain all trademark and other intellectual property rights.  "Clickhouse" is a trademark of ClickHouse, Inc. and they retain all trademark and other intellectual property rights.  These terms are used here by reference to integrating between their respective platforms.*
 
